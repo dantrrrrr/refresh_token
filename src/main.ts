@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true })); //only get value from dto define
   await app.listen(3000);
 }
 bootstrap();
