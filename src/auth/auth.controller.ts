@@ -14,55 +14,50 @@ import { Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AtGuard, RtGuard } from 'src/common/guards';
-import { GetCurrentUser, GetCurrentUserId } from 'src/common/decorators';
+import {
+  GetCurrentUser,
+  GetCurrentUserId,
+  Public,
+} from 'src/common/decorators';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   private readonly logger = new Logger(AuthController.name);
+
+  @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
   signupLocal(@Body() dto: AuthDto): Promise<Tokens> {
+    this.logger.log('User signup');
     return this.authService.signupLocal(dto);
   }
 
+  @Public()
   @Post('local/signin')
   @HttpCode(HttpStatus.OK)
   signinLocal(@Body() dto: AuthDto): Promise<Tokens> {
+    this.logger.log('User signin');
     return this.authService.signinLocal(dto);
   }
 
-  @UseGuards(AtGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetCurrentUserId() userId: number) {
     this.logger.log(`User ${userId} is logging out`);
-    // console.log(
-    //   '🚀 ~ file: auth.controller.ts:37 ~ AuthController ~ logout ~ user:',
-    //   user,
-    // );
+
     return this.authService.logout(userId);
   }
-
+  @Public()
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   refreshTokens(
     @GetCurrentUserId() userId: number,
-    // @GetCurrentUser('refreshToken') refreshToken: string,
-
     @GetCurrentUser('refreshToken') refreshToken: string,
   ) {
-    console.log(
-      '🚀 ~ file: auth.controller.ts:56 ~ AuthController ~ refreshToken:',
-      refreshToken,
-    );
-    console.log(
-      '🚀 ~ file: auth.controller.ts:62 ~ AuthController ~ userId:',
-      userId,
-    );
-
+    this.logger.log('user refresh token');
     return this.authService.refreshTokens(userId, refreshToken);
-    // return this.authService.refreshTokens(userId, refreshToken);
   }
 }

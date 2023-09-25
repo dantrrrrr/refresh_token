@@ -20,3 +20,4 @@ export class AtJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     return payload; //req.user =payloadƒ
   }
 }
+//this class only for verify the token then throw back the data if valid , if not throw 401
