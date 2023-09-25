@@ -10,7 +10,7 @@ export class RtJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       //   ignoreExpiration: false,
       secretOrKey: 'rt-secret',
 
-      passReqToCallback: true, //pass the object to callback function below
+      passReqToCallback: true, //pass the Req object into the callback function below
     });
   }
   //payload data after  decoded jwt token (above)

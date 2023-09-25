@@ -14,6 +14,7 @@ import { Tokens } from './types';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AtGuard, RtGuard } from 'src/common/guards';
+import { GetCurrentUser, GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -34,26 +35,34 @@ export class AuthController {
   @UseGuards(AtGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Req() req: Request) {
-    const user = req.user;
-    this.logger.log(`User ${user?.['sub']} is logging out`);
+  logout(@GetCurrentUserId() userId: number) {
+    this.logger.log(`User ${userId} is logging out`);
     // console.log(
     //   '🚀 ~ file: auth.controller.ts:37 ~ AuthController ~ logout ~ user:',
     //   user,
     // );
-    return this.authService.logout(user['sub']);
+    return this.authService.logout(userId);
   }
 
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  refreshTokens(@Req() req: Request) {
-    const user = req.user;
+  refreshTokens(
+    @GetCurrentUserId() userId: number,
+    // @GetCurrentUser('refreshToken') refreshToken: string,
+
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ) {
     console.log(
-      '🚀 ~ file: auth.controller.ts:49 ~ AuthController ~ refreshTokens ~ user:',
-      user,
+      '🚀 ~ file: auth.controller.ts:56 ~ AuthController ~ refreshToken:',
+      refreshToken,
+    );
+    console.log(
+      '🚀 ~ file: auth.controller.ts:62 ~ AuthController ~ userId:',
+      userId,
     );
 
-    return this.authService.refreshTokens(user['sub'], user['refreshToken']);
+    return this.authService.refreshTokens(userId, refreshToken);
+    // return this.authService.refreshTokens(userId, refreshToken);
   }
 }
